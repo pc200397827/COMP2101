@@ -21,11 +21,20 @@
 
 echo "Setuid files:"
 echo "============="
-find / -type f -executable -perm -4000 -ls 2>/dev/null | sort -k 3
-echo "setgid files:"
+find / -type f -executable -perm -4000 -ls 2>/dev/null|
+sort -k 3
+echo ""
+echo "Setgid files:"
 echo "============="
-find / -type f -executable -perm -2000 -ls 2>/dev/null | sort -k 36664444444
+find / -type f -executable -perm -2000 -ls 2>/dev/null|
+sort -k 6
+# Same as set uid above, it shows file with set gid bit enabled and gurbage errors. All listing is based on group which is on column 6 represented by -k no.6
+echo ""
+echo "10 largest files in system are:"
+echo "==============================="
+find /home/ -type f -exec ls -alh 2>/dev/null --block-size=M {} + | #Find command finds files on root directory and applies ls-alh command on all lines after creating full lists. also gives human readable memory size formet which is readable by humans and garbages the errors.
+sort -hr -k5 | #It shorts reversly by making memory size deferences by -h command and shorts 5th column
+head -n 10 | #it represents first 10 lines on pipe outout
+awk 'NR>2{ print $5, $3, $9}' #this awk example is found online which shows by this way we can dynamically represents the columns based on requirements
 
-echo "Finding the 10 large list based on their sizes: "
-find / 2>/dev/null f -exec ls -l --block-size=M {} + | sort -rh -k 5 | head -n 10 | awk '{print $5, $3, $9}'
-exit
+echo ""
